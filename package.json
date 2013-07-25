@@ -1,11 +1,12 @@
 {
   "scripts": {"start": "node app.js"},
   "name": "LeapNoise",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "dependencies": {
     "leapjs": "~0.2.0-beta6",
-    "applescript": "~0.2.1"
+    "applescript": "~0.2.1",
+    "bluegel": ">= 0.0.1"
   }
   
 }
