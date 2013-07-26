@@ -2,7 +2,14 @@ var Leap = require('leapjs');
 var AppleScript = require("applescript");
 var BlueGel = require("bluegel");
 
-var gestureFilter = new BlueGel.Filters.Gesture({type: "swipe", state: "stop"}, function(analyzedGesture) {
+var filter = new BlueGel.Filter();
+filter.on("gesture", {
+    type: "swipe",
+    state: "stop",
+    // set a higher window so that we don't pick up the hand going back to rest
+    // as reverting a volume change
+    duplicateWindow: 1000
+  }, function(analyzedGesture) {
   var dominantMovement = analyzedGesture.dominantMovement();
   var command;
   switch(dominantMovement.direction) {
@@ -36,4 +43,4 @@ var gestureFilter = new BlueGel.Filters.Gesture({type: "swipe", state: "stop"}, 
 })
 
 // need to bind the function properly to avoid needing the extra closure
-Leap.loop({enableGestures: true}, function(frame) { gestureFilter.filter(frame) });
+filter.drinkFromFirehose(new Leap.Controller({enableGestures: true}));
