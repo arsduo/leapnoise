@@ -1,7 +1,7 @@
 var Leap = require('leapjs');
 var BlueGel = require("bluegel");
 
-var filter = new BlueGel.Filter();
+var filter = new BlueGel(new Leap.Controller({enableGestures: true}));
 
 // import and set up our three filter types
 var filterTypes = [
@@ -10,11 +10,15 @@ var filterTypes = [
   require("./lib/track_filter.js")
 ];
 
-var action;
+var activationFilter = require("./lib/activation_filter.js");
+
 for (var i = 0; i < filterTypes.length; i++) {
   action = filterTypes[i];
-  filter.on(action.filterType, action.filterParameters, action.filter)
+  filter.on(action.filterType, action.filterParameters, activationFilter.filter(action.filter));
 }
 
-// need to bind the function properly to avoid needing the extra closure
-filter.drinkFromFirehose(new Leap.Controller({enableGestures: true}));
+filter.on("hold", {state: "start", minDuration: 500}, function(gesture) {
+  // the update event will be fired once the hold reaches the minimum duration
+  console.log("Activating control!");
+  activationFilter.activate();
+})
